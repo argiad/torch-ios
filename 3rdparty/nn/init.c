@@ -107,6 +107,12 @@
 #include "generic/L1Cost.c"
 #include "THGenerateFloatTypes.h"
 
+#include "generic/SpatialReplicationPadding.c"
+#include "THGenerateFloatTypes.h"
+
+#include "generic/BatchNormalization.c"
+#include "THGenerateFloatTypes.h"
+
 LUA_EXTERNC DLL_EXPORT int luaopen_libnn(lua_State *L);
 
 int luaopen_libnn(lua_State *L)
@@ -149,6 +155,8 @@ int luaopen_libnn(lua_State *L)
   nn_FloatMultiMarginCriterion_init(L);
   nn_FloatMultiLabelMarginCriterion_init(L);
   nn_FloatL1Cost_init(L);
+  nn_FloatSpatialReplicationPadding_init(L);
+  nn_FloatBatchNormalization_init(L);
 
   nn_DoubleMin_init(L);
   nn_DoubleMax_init(L);
@@ -184,6 +192,8 @@ int luaopen_libnn(lua_State *L)
   nn_DoubleMultiMarginCriterion_init(L);
   nn_DoubleMultiLabelMarginCriterion_init(L);
   nn_DoubleL1Cost_init(L);
+  nn_DoubleSpatialReplicationPadding_init(L);
+  nn_DoubleBatchNormalization_init(L); 
 
   return 1;
 }
