@@ -82,9 +82,11 @@
   THTensor_fastSet1d(classification, 1, obj.y);
   lua_getglobal(L,"classifyExample");
   luaT_pushudata(L, classification, "torch.FloatTensor");
-  
+  NSDate *start = [NSDate date];
   //p_call -- args, results
   int res = lua_pcall(L, 1, 1, 0);
+  NSTimeInterval timeInterval = fabs([start timeIntervalSinceNow]);
+  NSLog(@"Forward took %.2f sec", timeInterval);
   if (res != 0)
   {
     NSLog(@"error running function `f': %s",lua_tostring(L, -1));
