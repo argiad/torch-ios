@@ -28,7 +28,6 @@
    In test time, this running mean/std is used to normalize.
 ]]--
 local BN,parent = torch.class('nn.BatchNormalization', 'nn.Module')
-local THNN = require 'nn.THNN'
 
 BN.__version = 2
 
@@ -127,6 +126,14 @@ function BN:updateOutput(input)
    return self.output
 end
 
+function BN:updateGradInput(input, gradOutput)
+    return nil
+end
+
+function BN:accGradParameters(input, gradOutput, scale)
+    return nil
+end
+
 function BN:read(file, version)
    parent.read(self, file)
    if version < 2 then
@@ -135,21 +142,4 @@ function BN:read(file, version)
          self.running_std = nil
       end
    end
-end
-
-function BN:clearState()
-   -- first 5 buffers are not present in the current implementation,
-   -- but we keep them for cleaning old saved models
-   nn.utils.clear(self, {
-      'buffer',
-      'buffer2',
-      'centered',
-      'std',
-      'normalized',
-      '_input',
-      '_gradOutput',
-      'save_mean',
-      'save_std',
-   })
-   return parent.clearState(self)
 end

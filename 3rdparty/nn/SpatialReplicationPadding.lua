@@ -18,3 +18,10 @@ function SpatialReplicationPadding:updateOutput(input)
    return self.output
 end
 
+function SpatialReplicationPadding:updateGradInput(input, gradOutput)
+    return nil
+end
+
+function SpatialReplicationPadding:accGradParameters(input, gradOutput, scale)
+    return nil
+end

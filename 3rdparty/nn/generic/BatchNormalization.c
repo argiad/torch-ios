@@ -12,7 +12,7 @@ int nn_(BatchNormalization_updateOutput)(lua_State *L)
   THTensor *running_var = luaT_getfieldcheckudata(L, 1, "running_var", torch_Tensor);
   THTensor *save_mean = luaT_getfieldcheckudata(L, 1, "save_mean", torch_Tensor);
   THTensor *save_std = luaT_getfieldcheckudata(L, 1, "save_std", torch_Tensor);
-  int train = luaT_getfieldcheckint(L, 1, "train");
+  int train = 0;
   real momentum = luaT_getfieldchecknumber(L, 1, "momentum");
   real eps = luaT_getfieldchecknumber(L, 1, "eps");
 
