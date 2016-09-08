@@ -20,6 +20,7 @@
 		3CC893691BE6679100A40467 /* Torch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CC893681BE6679100A40467 /* Torch.m */; };
 		3CC8936B1BE6679A00A40467 /* Torch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC8936A1BE6679A00A40467 /* Torch.framework */; };
 		3CC8936C1BE66BFC00A40467 /* Torch.framework in Resources */ = {isa = PBXBuildFile; fileRef = 3CC8936A1BE6679A00A40467 /* Torch.framework */; };
+		8B75E2E71D8197CD001A742B /* lena.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8B75E2E61D8197CD001A742B /* lena.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		3CC893671BE6679100A40467 /* Torch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Torch.h; path = ../../../framework/Torch.h; sourceTree = "<group>"; };
 		3CC893681BE6679100A40467 /* Torch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Torch.m; path = ../../../framework/Torch.m; sourceTree = "<group>"; };
 		3CC8936A1BE6679A00A40467 /* Torch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Torch.framework; path = ../../../Torch.framework; sourceTree = "<group>"; };
+		8B75E2E61D8197CD001A742B /* lena.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = lena.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				3CC8936A1BE6679A00A40467 /* Torch.framework */,
 				3C6963CA1B2F7D0000E39843 /* XORClassifyObject.h */,
 				3C6963CB1B2F7D0000E39843 /* XORClassifyObject.m */,
+				8B75E2E61D8197CD001A742B /* lena.jpg */,
 				3C6963C81B2A5E6100E39843 /* xor_lua */,
 				3C6963A31B2A5C6300E39843 /* Main.storyboard */,
 				3C6963A61B2A5C6300E39843 /* Images.xcassets */,
@@ -224,6 +227,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CC8936C1BE66BFC00A40467 /* Torch.framework in Resources */,
+				8B75E2E71D8197CD001A742B /* lena.jpg in Resources */,
 				3C6963A51B2A5C6300E39843 /* Main.storyboard in Resources */,
 				3C6963C91B2A5E6100E39843 /* xor_lua in Resources */,
 				3C6963AA1B2A5C6300E39843 /* LaunchScreen.xib in Resources */,

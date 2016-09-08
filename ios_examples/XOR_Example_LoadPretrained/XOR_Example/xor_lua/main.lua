@@ -19,7 +19,7 @@ end
 function classifyExample(tensorInput)
     --v = model(tensorInput)
     input = torch.FloatTensor(1, 3, 256, 256)
-    output = model:forward(input)
+    output = model:forward(tensorInput)
     --print(output)
     return 1
 end
