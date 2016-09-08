@@ -20,8 +20,8 @@ function loadImageFromDirectory(path)
     --inputImage = image.load(path, 3):float()
 end
 
-function classifyExample(tensorInput)
+function classifyExample()
+    input = torch.FloatTensor(1, 3, 256, 256)
     output = model:forward(input)
-    --print(output)
     return 1
 end
