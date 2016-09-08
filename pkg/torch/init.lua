@@ -67,6 +67,14 @@ function torch.setdefaulttensortype(typename)
    end
 end
 
+function torch.type(obj)
+   local class = torch.typename(obj)
+   if not class then
+      class = type(obj)
+   end
+   return class
+end
+
 torch.setdefaulttensortype('torch.FloatTensor')
 
 torch.include('torch','Tensor.lua')

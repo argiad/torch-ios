@@ -27,7 +27,9 @@
     self.t = [Torch new];
     [self.t initialize];
     [self.t runMain:@"main" inFolder:@"xor_lua"];
-    [self.t loadFileWithName:@"xor_model.net" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadNeuralNetwork"];
+    //[self.t loadFileWithName:@"xor_model.net" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadNeuralNetwork"];
+    [self.t loadFileWithName:@"model.t7" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadNeuralNetwork"];
+    [self.t loadFileWithName:@"pafos.jpg" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadImageFromDirectory"];
 }
 
 - (void)disableKeyboard

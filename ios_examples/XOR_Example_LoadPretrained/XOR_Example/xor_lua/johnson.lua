@@ -1,6 +1,6 @@
 backend = nn
 pad = nn.SpatialReplicationPadding
-normalization = nn.SpatialBatchNormalization
+normalization = nn.InstanceNormalization
 
 local function res_block()
 -- Convolutions
