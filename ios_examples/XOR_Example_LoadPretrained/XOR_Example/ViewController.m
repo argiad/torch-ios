@@ -34,9 +34,7 @@ typedef struct {
     self.t = [Torch new];
     [self.t initialize];
     [self.t runMain:@"main" inFolder:@"xor_lua"];
-    //[self.t loadFileWithName:@"xor_model.net" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadNeuralNetwork"];
     [self.t loadFileWithName:@"model.t7" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadNeuralNetwork"];
-    [self.t loadFileWithName:@"pafos.jpg" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadImageFromDirectory"];
 }
 
 - (void)disableKeyboard
@@ -77,13 +75,13 @@ typedef struct {
 
 - (CGFloat)classifyExample:(XORClassifyObject *)obj inState:(lua_State *)L
 {
-  NSInteger garbage_size_kbytes = lua_gc(L, LUA_GCCOUNT, LUAT_STACK_INDEX_FLOAT_TENSORS);
+    NSInteger garbage_size_kbytes = lua_gc(L, LUA_GCCOUNT, LUAT_STACK_INDEX_FLOAT_TENSORS);
 
-  if (garbage_size_kbytes >= KBYTES_CLEAN_UP)
-  {
-    NSLog(@"LUA -> Cleaning Up Garbage");
-    lua_gc(L, LUA_GCCOLLECT, LUAT_STACK_INDEX_FLOAT_TENSORS);
-  }
+    if (garbage_size_kbytes >= KBYTES_CLEAN_UP)
+    {
+        NSLog(@"LUA -> Cleaning Up Garbage");
+        lua_gc(L, LUA_GCCOLLECT, LUAT_STACK_INDEX_FLOAT_TENSORS);
+    }
     
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"lena" ofType:@"jpg"];
     NSData *imageData = [NSData dataWithContentsOfFile:filePath];
@@ -92,8 +90,11 @@ typedef struct {
     int imageWidth = (int)CGImageGetWidth(image.CGImage);
     int imageHeight = (int)CGImageGetHeight(image.CGImage);
     
-  THFloatStorage *classification_storage = THFloatStorage_newWithSize4(1, 3, imageWidth, imageHeight);
-  THFloatTensor *classification = THFloatTensor_newWithStorage4d(classification_storage, 0, 1, 1, 3, 1, imageWidth, 1, imageHeight, 1);
+    THFloatStorage *input_storage = THFloatStorage_newWithSize4(1, 3, imageWidth, imageHeight);
+    THFloatTensor *input = THFloatTensor_newWithStorage4d(input_storage, 0, 1, 1, 3, 1, imageWidth, 1, imageHeight, 1);
+    
+    THFloatStorage *output_storage = THFloatStorage_newWithSize4(1, 3, imageWidth, imageHeight);
+    THFloatTensor *output = THFloatTensor_newWithStorage4d(output_storage, 0, 1, 1, 3, 1, imageWidth, 1, imageHeight, 1);
     
     
     // First get the image into your data buffer
@@ -122,27 +123,26 @@ typedef struct {
             
 //            NSLog(@"rgb = (%@, %@, %@)", @(r), @(g), @(b));
             
-            THTensor_fastSet4d(classification, 0, 0, x, y, r);
-            THTensor_fastSet4d(classification, 0, 1, x, y, g);
-            THTensor_fastSet4d(classification, 0, 2, x, y, b);
+            THTensor_fastSet4d(input, 0, 0, x, y, r);
+            THTensor_fastSet4d(input, 0, 1, x, y, g);
+            THTensor_fastSet4d(input, 0, 2, x, y, b);
         }
     }
     
-//  THTensor_fastSet1d(classification, 0, obj.x);
-//  THTensor_fastSet1d(classification, 1, obj.y);
-  lua_getglobal(L,"classifyExample");
-  luaT_pushudata(L, classification, "torch.FloatTensor");
-  NSDate *start = [NSDate date];
-  //p_call -- args, results
+    lua_getglobal(L,"classifyExample");
+    luaT_pushudata(L, input, "torch.FloatTensor");
+    luaT_pushudata(L, output, "torch.FloatTensor");
+    NSDate *start = [NSDate date];
+    //p_call -- args, results
     
-  int res = lua_pcall(L, 1, 1, 0);
-  NSTimeInterval timeInterval = fabs([start timeIntervalSinceNow]);
-  NSLog(@"Forward took %.2f sec", timeInterval);
-  if (res != 0)
-  {
-    NSLog(@"error running function `f': %s",lua_tostring(L, -1));
-      return -1;
-  }
+    int res = lua_pcall(L, 2, 1, 0);
+    NSTimeInterval timeInterval = fabs([start timeIntervalSinceNow]);
+    NSLog(@"Forward took %.2f sec", timeInterval);
+    if (res != 0)
+    {
+        NSLog(@"error running function `f': %s",lua_tostring(L, -1));
+        return -1;
+    }
     
     
     CGContextRef newContext = CGBitmapContextCreate(rawData, width, height,

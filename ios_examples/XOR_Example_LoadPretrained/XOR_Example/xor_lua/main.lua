@@ -5,7 +5,6 @@ require('util')
 params_mode = 'style'
 params_tv_weight = 0
 model = require('johnson')
-inputImage = torch.FloatTensor(1, 3, 256, 256)
 
 function loadNeuralNetwork(path)
     print (path)
@@ -16,12 +15,8 @@ function loadNeuralNetwork(path)
     print ("---------------------\n")
 end
 
-function loadImageFromDirectory(path)
-    --inputImage = image.load(path, 3):float()
-end
-
-function classifyExample()
-    input = torch.FloatTensor(1, 3, 256, 256)
-    output = model:forward(input)
+function classifyExample(tensorInput, tensorOutput)
+    tensorOutput:copy(model:forward(tensorInput):resizeAs(tensorInput))
+    print(tensorOutput)
     return 1
 end
