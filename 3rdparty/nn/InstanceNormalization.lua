@@ -36,11 +36,10 @@ function InstanceNormalization:updateOutput(input)
    local batch_size = input:size(1)
    
    if batch_size ~= self.prev_batch_size or (self.bn and self:type() ~= self.bn:type())  then
-      self.bn = input.nn.SpatialBatchNormalization(input:size(1)*input:size(2), self.eps, self.momentum, self.affine)
-      self.bn:type(self:type())
+      self.bn = nn.SpatialBatchNormalization(input:size(1)*input:size(2), self.eps, self.momentum, self.affine)
+      --self.bn:type(self:type())
       self.bn.running_mean:copy(self.running_mean:repeatTensor(batch_size))
       self.bn.running_var:copy(self.running_var:repeatTensor(batch_size))
-
       self.prev_batch_size = input:size(1)
    end
 
@@ -55,42 +54,9 @@ function InstanceNormalization:updateOutput(input)
    end
 
    local input_1obj = input:view(1,input:size(1)*input:size(2),input:size(3),input:size(4))
+   --print (input_1obj)
    self.output = self.bn:forward(input_1obj):viewAs(input)
    
    return self.output
 end
 
-function InstanceNormalization:updateGradInput(input, gradOutput)
-   self.gradInput = self.gradInput or gradOutput.new()
-
-   assert(self.bn)
-
-   local input_1obj = input:view(1,input:size(1)*input:size(2),input:size(3),input:size(4)) 
-   local gradOutput_1obj = gradOutput:view(1,input:size(1)*input:size(2),input:size(3),input:size(4)) 
-   
-   if self.affine then
-      self.bn.gradWeight:zero()
-      self.bn.gradBias:zero()
-   end
-
-   self.gradInput = self.bn:backward(input_1obj, gradOutput_1obj):viewAs(input)
-
-   if self.affine then
-      self.gradWeight:add(self.bn.gradWeight:view(input:size(1),self.nOutput):sum(1))
-      self.gradBias:add(self.bn.gradBias:view(input:size(1),self.nOutput):sum(1))
-   end
-   return self.gradInput
-end
-
-function InstanceNormalization:clearState()
-   self.output = self.output.new()
-   self.gradInput = self.gradInput.new()
-   
-   self.bn:clearState()
-end
-
-function InstanceNormalization:evaluate()
-end
-
-function InstanceNormalization:training()
-end
