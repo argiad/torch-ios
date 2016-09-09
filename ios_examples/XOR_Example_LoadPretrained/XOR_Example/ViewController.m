@@ -93,11 +93,14 @@ typedef struct {
     int imageHeight = (int)CGImageGetHeight(image.CGImage);
     
     THFloatStorage *input_storage = THFloatStorage_newWithSize4(1, 3, imageHeight, imageWidth);
-    THFloatTensor *input = THFloatTensor_newWithStorage4d(input_storage, 0, 1, 3*imageHeight*imageWidth, 3, imageHeight*imageWidth, imageHeight, imageWidth, imageWidth, 1);
+    THFloatTensor *input = THFloatTensor_newWithStorage4d(input_storage, 0, 1, 3 * imageHeight * imageWidth, 3, imageHeight * imageWidth, imageHeight, imageWidth, imageWidth, 1);
     
-    THFloatStorage *output_storage = THFloatStorage_newWithSize4(1, 3, imageHeight, imageHeight);
-    THFloatTensor *output = THFloatTensor_newWithStorage4d(output_storage, 0, 1, 3*imageHeight*imageWidth, 3, imageHeight*imageWidth, imageHeight, imageWidth, imageWidth, 1);
+    int resultWidth = imageWidth - 1;
+    int resultHeight = imageHeight - 1;
     
+    THFloatStorage *output_storage = THFloatStorage_newWithSize4(1, 3, resultHeight, resultWidth);
+    THFloatStorage_fill(output_storage, 0.0f);
+    THFloatTensor *output = THFloatTensor_newWithStorage4d(output_storage, 0, 1, 3 * resultHeight * resultWidth, 3, resultHeight * resultWidth, resultHeight, resultWidth, resultWidth, 1);
     
     // First get the image into your data buffer
     CGImageRef imageRef = [image CGImage];
@@ -151,15 +154,20 @@ typedef struct {
         return -1;
     }
     
-    unsigned char *resultRawData = (unsigned char*) calloc(height * width * 4, sizeof(unsigned char));
+    unsigned char *resultRawData = (unsigned char*) calloc(resultWidth * resultHeight * 4, sizeof(unsigned char));
     
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            int offset = y * imageWidth * 4 + x * 4;
+    for (int y = 0; y < resultHeight; y++) {
+        for (int x = 0; x < resultWidth; x++) {
+            int offset = y * resultWidth * 4 + x * 4;
+
+            //shift fix hack
+//            float r = THTensor_fastGet4d(output, 0, 0, y, x - y) + 103.939;
+//            float g = THTensor_fastGet4d(output, 0, 1, y, x - y) + 116.779;
+//            float b = THTensor_fastGet4d(output, 0, 2, y, x - y) + 123.68;
             
-            float r = THTensor_fastGet4d(output, 0, 0, x, y) + 103.939;
-            float g = THTensor_fastGet4d(output, 0, 1, x, y) + 116.779;
-            float b = THTensor_fastGet4d(output, 0, 2, x, y) + 123.68;
+            float r = THTensor_fastGet4d(output, 0, 0, y, x) + 103.939;
+            float g = THTensor_fastGet4d(output, 0, 1, y, x) + 116.779;
+            float b = THTensor_fastGet4d(output, 0, 2, y, x) + 123.68;
             
             r = CLAMP(r, 0, 255);
             g = CLAMP(g, 0, 255);
@@ -179,13 +187,14 @@ typedef struct {
     
     NSData *outputData = [NSData dataWithContentsOfFile:argFilePath];
     
-    CGContextRef newContext = CGBitmapContextCreate(resultRawData, width, height,
+    CGContextRef newContext = CGBitmapContextCreate(resultRawData, resultWidth, resultHeight,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     
     CGImageRef resultImageRef = CGBitmapContextCreateImage(newContext);
     UIImage *result = [UIImage imageWithCGImage:resultImageRef];
     CGContextRelease(newContext);
+    //set breakpoint here to see image
     CGColorSpaceRelease(colorSpace);
     
     free(rawData);
