@@ -11,6 +11,8 @@
 #define KBYTES_CLEAN_UP 10000 //10 Megabytes Max Storage Otherwise Force Cleanup (For This Example We Will Probably Never Reach It -- But Good Practice).
 #define LUAT_STACK_INDEX_FLOAT_TENSORS 4 //Index of Garbage Collection Stack Value
 
+#define CLAMP(value, min, max) MAX(MIN(value, max), min)
+
 typedef struct {
     uint8_t red;
     uint8_t green;
@@ -132,10 +134,15 @@ typedef struct {
     lua_getglobal(L,"classifyExample");
     luaT_pushudata(L, input, "torch.FloatTensor");
     luaT_pushudata(L, output, "torch.FloatTensor");
+    
+    NSString *argFilePath = [NSString stringWithFormat:@"%@/model.t7", NSTemporaryDirectory()];
+    const char *filePathCString = [argFilePath UTF8String];
+    lua_pushstring(L, filePathCString);
+    
     NSDate *start = [NSDate date];
     //p_call -- args, results
     
-    int res = lua_pcall(L, 2, 1, 0);
+    int res = lua_pcall(L, 3, 1, 0);
     NSTimeInterval timeInterval = fabs([start timeIntervalSinceNow]);
     NSLog(@"Forward took %.2f sec", timeInterval);
     if (res != 0)
@@ -144,18 +151,45 @@ typedef struct {
         return -1;
     }
     
+    unsigned char *resultRawData = (unsigned char*) calloc(height * width * 4, sizeof(unsigned char));
     
-    CGContextRef newContext = CGBitmapContextCreate(rawData, width, height,
+    for (int y = 0; y < imageHeight; y++) {
+        for (int x = 0; x < imageWidth; x++) {
+            int offset = y * imageWidth * 4 + x * 4;
+            
+            float r = THTensor_fastGet4d(output, 0, 0, x, y);
+            float g = THTensor_fastGet4d(output, 0, 1, x, y);
+            float b = THTensor_fastGet4d(output, 0, 2, x, y);
+            
+            r = CLAMP(r, 0, 1);
+            g = CLAMP(g, 0, 1);
+            b = CLAMP(b, 0, 1);
+            
+            resultRawData[offset] = (uint8_t)roundf(r * 255);
+            resultRawData[offset + 1] = (uint8_t)roundf(g * 255);
+            resultRawData[offset + 2] = (uint8_t)roundf(b * 255);
+            resultRawData[offset + 3] = (uint8_t)255;
+            
+//            resultRawData[offset] = 255;
+//            resultRawData[offset + 1] = 0;
+//            resultRawData[offset + 2] = 0;
+//            resultRawData[offset + 3] = 255;
+        }
+    }
+    
+    NSData *outputData = [NSData dataWithContentsOfFile:argFilePath];
+    
+    CGContextRef newContext = CGBitmapContextCreate(resultRawData, width, height,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     
-    CGImageRef resultImageRef = CGBitmapContextCreateImage(context);
-//    CGContextDrawImage(newContext, CGRectMake(0, 0, width, height), imageRef);
-//    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    CGImageRef resultImageRef = CGBitmapContextCreateImage(newContext);
     UIImage *result = [UIImage imageWithCGImage:resultImageRef];
     CGContextRelease(newContext);
     CGColorSpaceRelease(colorSpace);
     
+    free(rawData);
+    free(resultRawData);
   
   if (!lua_isnumber(L, -1))
   {

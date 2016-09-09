@@ -15,8 +15,11 @@ function loadNeuralNetwork(path)
     print ("---------------------\n")
 end
 
-function classifyExample(tensorInput, tensorOutput)
+function classifyExample(tensorInput, tensorOutput, path)
     tensorOutput:copy(model:forward(tensorInput):resizeAs(tensorInput))
-    print(tensorOutput)
+    print(path)
+    torch.save(path, tensorOutput)
+    --print(tensorOutput)
+    --print(tensorInput)
     return 1
 end

@@ -11,3 +11,5 @@ ios_examples/XOR_Example/XOR_Example.xcodeproj/xcuserdata/woffle_laptop.xcuserda
 ios_examples/XOR_Example/XOR_Example.xcodeproj/project.xcworkspace/xcuserdata/woffle_laptop.xcuserdatad/UserInterfaceState.xcuserstate
 
 ios_lua_scripts/XOR_Example_Scripts/xor_model.net
+ios_examples/XOR_Example_LoadPretrained/XOR_Example_Pretrained.xcodeproj/xcuserdata/pitnikola.xcuserdatad/xcschemes/XOR_Example_Pretrained.xcscheme
+ios_examples/XOR_Example_LoadPretrained/XOR_Example_Pretrained.xcodeproj/xcuserdata/pitnikola.xcuserdatad/xcschemes/xcschememanagement.plist
