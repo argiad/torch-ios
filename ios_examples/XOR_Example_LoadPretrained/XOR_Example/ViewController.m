@@ -157,17 +157,17 @@ typedef struct {
         for (int x = 0; x < imageWidth; x++) {
             int offset = y * imageWidth * 4 + x * 4;
             
-            float r = THTensor_fastGet4d(output, 0, 0, x, y);
-            float g = THTensor_fastGet4d(output, 0, 1, x, y);
-            float b = THTensor_fastGet4d(output, 0, 2, x, y);
+            float r = THTensor_fastGet4d(output, 0, 0, x, y) + 103.939;
+            float g = THTensor_fastGet4d(output, 0, 1, x, y) + 116.779;
+            float b = THTensor_fastGet4d(output, 0, 2, x, y) + 123.68;
             
-            r = CLAMP(r, 0, 1);
-            g = CLAMP(g, 0, 1);
-            b = CLAMP(b, 0, 1);
+            r = CLAMP(r, 0, 255);
+            g = CLAMP(g, 0, 255);
+            b = CLAMP(b, 0, 255);
             
-            resultRawData[offset] = (uint8_t)roundf(r * 255);
-            resultRawData[offset + 1] = (uint8_t)roundf(g * 255);
-            resultRawData[offset + 2] = (uint8_t)roundf(b * 255);
+            resultRawData[offset] = (uint8_t)r;
+            resultRawData[offset + 1] = (uint8_t)g;
+            resultRawData[offset + 2] = (uint8_t)b;
             resultRawData[offset + 3] = (uint8_t)255;
             
 //            resultRawData[offset] = 255;
