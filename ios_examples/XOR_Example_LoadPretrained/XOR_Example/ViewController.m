@@ -92,11 +92,11 @@ typedef struct {
     int imageWidth = (int)CGImageGetWidth(image.CGImage);
     int imageHeight = (int)CGImageGetHeight(image.CGImage);
     
-    THFloatStorage *input_storage = THFloatStorage_newWithSize4(1, 3, imageWidth, imageHeight);
-    THFloatTensor *input = THFloatTensor_newWithStorage4d(input_storage, 0, 1, 1, 3, 1, imageWidth, 1, imageHeight, 1);
+    THFloatStorage *input_storage = THFloatStorage_newWithSize4(1, 3, imageHeight, imageWidth);
+    THFloatTensor *input = THFloatTensor_newWithStorage4d(input_storage, 0, 1, 3*imageHeight*imageWidth, 3, imageHeight*imageWidth, imageHeight, imageWidth, imageWidth, 1);
     
-    THFloatStorage *output_storage = THFloatStorage_newWithSize4(1, 3, imageWidth, imageHeight);
-    THFloatTensor *output = THFloatTensor_newWithStorage4d(output_storage, 0, 1, 1, 3, 1, imageWidth, 1, imageHeight, 1);
+    THFloatStorage *output_storage = THFloatStorage_newWithSize4(1, 3, imageHeight, imageHeight);
+    THFloatTensor *output = THFloatTensor_newWithStorage4d(output_storage, 0, 1, 3*imageHeight*imageWidth, 3, imageHeight*imageWidth, imageHeight, imageWidth, imageWidth, 1);
     
     
     // First get the image into your data buffer
@@ -125,9 +125,9 @@ typedef struct {
             
 //            NSLog(@"rgb = (%@, %@, %@)", @(r), @(g), @(b));
             
-            THTensor_fastSet4d(input, 0, 0, x, y, r);
-            THTensor_fastSet4d(input, 0, 1, x, y, g);
-            THTensor_fastSet4d(input, 0, 2, x, y, b);
+            THTensor_fastSet4d(input, 0, 0, y, x, r);
+            THTensor_fastSet4d(input, 0, 1, y, x, g);
+            THTensor_fastSet4d(input, 0, 2, y, x, b);
         }
     }
     
@@ -135,7 +135,7 @@ typedef struct {
     luaT_pushudata(L, input, "torch.FloatTensor");
     luaT_pushudata(L, output, "torch.FloatTensor");
     
-    NSString *argFilePath = [NSString stringWithFormat:@"%@/model.t7", NSTemporaryDirectory()];
+    NSString *argFilePath = [NSString stringWithFormat:@"%@/", NSTemporaryDirectory()];
     const char *filePathCString = [argFilePath UTF8String];
     lua_pushstring(L, filePathCString);
     

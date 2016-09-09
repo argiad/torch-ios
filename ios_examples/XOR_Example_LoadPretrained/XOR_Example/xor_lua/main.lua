@@ -1,14 +1,12 @@
 torch.setdefaulttensortype('torch.FloatTensor')
 
 require('util')
-
-params_mode = 'style'
-params_tv_weight = 0
 model = require('johnson')
 
 function loadNeuralNetwork(path)
     print (path)
     loadParams(model, path)
+    model:evaluate()
     print ("Loaded Neural Network -- Success")
     print ("Model Architecture --\n")
     print (model)
@@ -16,10 +14,11 @@ function loadNeuralNetwork(path)
 end
 
 function classifyExample(tensorInput, tensorOutput, path)
-    tensorOutput:copy(model:forward(tensorInput):resizeAs(tensorInput))
+    torch.save(path .. "input.t7", tensorInput)
+    --tensorOutput:copy(model:forward(tensorInput):resizeAs(tensorInput))
     print(path)
-    torch.save(path, tensorOutput)
-    --print(tensorOutput)
-    --print(tensorInput)
+    output = model:forward(tensorInput)
+    print(output)
+    torch.save(path .. "output.t7", output)
     return 1
 end

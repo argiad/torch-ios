@@ -235,6 +235,10 @@ function Module:listModules()
    return modules
 end
 
+function Module:evaluate()
+   self.train = false
+end
+
 function Module:__call__(input, gradOutput)
    self:forward(input)
    if gradOutput then
