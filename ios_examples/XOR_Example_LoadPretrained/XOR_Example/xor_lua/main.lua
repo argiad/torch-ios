@@ -15,10 +15,8 @@ end
 
 function classifyExample(tensorInput, tensorOutput, path)
     torch.save(path .. "input.t7", tensorInput)
-    --tensorOutput:copy(model:forward(tensorInput):resizeAs(tensorInput))
+    tensorOutput:copy(model:forward(tensorInput):resizeAs(tensorInput))
     print(path)
-    output = model:forward(tensorInput)
-    print(output)
-    torch.save(path .. "output.t7", output)
+    torch.save(path .. "output.t7", tensorOutput)
     return 1
 end
