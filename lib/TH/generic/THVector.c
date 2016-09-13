@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "generic/THVector.c"
 #else
 
-#ifdef __NEON__
+#ifdef __NEON_HL__
 
 #include <arm_neon.h>
 
@@ -55,7 +55,7 @@ static inline void THVector_(fill)(real *x, const real c, const long n) {
 
 static inline void THVector_(add)(real *y, const real *x, const real c, const long n)
 {
-#if defined(__NEON__) && defined(TH_REAL_IS_FLOAT)
+#if defined(__NEON_HL__) && defined(TH_REAL_IS_FLOAT)
   THVector_(neon_axpy)(y, x, c, n);
 #else
   long i = 0;
