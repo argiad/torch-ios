@@ -2,6 +2,42 @@
 #define TH_GENERIC_FILE "generic/THVector.c"
 #else
 
+#ifdef __NEON__
+
+#include <arm_neon.h>
+
+static inline void THVector_(neon_axpy)(float *dst,
+                const float *src,
+                const float alpha,
+                const long elemCnt)
+{
+    long i;
+    for (i = 0; i <= elemCnt - 16; i += 16)
+    {
+        float32x4_t q0 = vld1q_f32(src + i);
+        float32x4_t q1 = vld1q_f32(src + i + 4);
+        float32x4_t q2 = vld1q_f32(src + i + 8);
+        float32x4_t q3 = vld1q_f32(src + i + 12);
+        float32x4_t q4 = vld1q_f32(dst + i);
+        float32x4_t q5 = vld1q_f32(dst + i + 4);
+        float32x4_t q6 = vld1q_f32(dst + i + 8);
+        float32x4_t q7 = vld1q_f32(dst + i + 12);
+        q0 = vmlaq_n_f32(q4, q0, alpha);
+        q1 = vmlaq_n_f32(q5, q1, alpha);
+        q2 = vmlaq_n_f32(q6, q2, alpha);
+        q3 = vmlaq_n_f32(q7, q3, alpha);
+        vst1q_f32(dst + i,      q0);
+        vst1q_f32(dst + i + 4,  q1);
+        vst1q_f32(dst + i + 8,  q2);
+        vst1q_f32(dst + i + 12, q3);
+    }
+    for (; i < elemCnt; i++)
+    {
+        dst[i] = src[i] * alpha + dst[i];
+    }
+}
+#endif
+
 static inline void THVector_(fill)(real *x, const real c, const long n) {
   long i = 0;
 
@@ -19,6 +55,9 @@ static inline void THVector_(fill)(real *x, const real c, const long n) {
 
 static inline void THVector_(add)(real *y, const real *x, const real c, const long n)
 {
+#if defined(__NEON__) && defined(TH_REAL_IS_FLOAT)
+  THVector_(neon_axpy)(y, x, c, n);
+#else
   long i = 0;
 
   for(;i < n-4; i += 4)
@@ -31,6 +70,7 @@ static inline void THVector_(add)(real *y, const real *x, const real c, const lo
 
   for(; i < n; i++)
     y[i] += c * x[i];
+#endif
 }
 
 static inline void THVector_(diff)(real *z, const real *x, const real *y, const long n)
