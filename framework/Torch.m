@@ -95,14 +95,6 @@
   luaopen_libnn(L);
   [self requireFrameworkPackage:@"nn" frameworkResourcesPath:frameworkResourcesPath];
 
-  // load nnx
-  luaopen_libnnx(L);
-  [self requireFrameworkPackage:@"nnx" frameworkResourcesPath:frameworkResourcesPath];
-
-  // load image
-  luaopen_libimage(L);
-  [self requireFrameworkPackage:@"image" frameworkResourcesPath:frameworkResourcesPath];
-
   return;
 }
 
