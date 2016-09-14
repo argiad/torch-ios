@@ -35,9 +35,8 @@ function InstanceNormalization:updateOutput(input)
 
    local batch_size = input:size(1)
    
-   if batch_size ~= self.prev_batch_size or (self.bn and self:type() ~= self.bn:type())  then
+   if batch_size ~= self.prev_batch_size or self.bn  then
       self.bn = nn.SpatialBatchNormalization(input:size(1)*input:size(2), self.eps, self.momentum, self.affine)
-      --self.bn:type(self:type())
       self.bn.running_mean:copy(self.running_mean:repeatTensor(batch_size))
       self.bn.running_var:copy(self.running_var:repeatTensor(batch_size))
       self.prev_batch_size = input:size(1)
