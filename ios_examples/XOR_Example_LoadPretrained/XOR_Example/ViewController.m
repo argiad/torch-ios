@@ -78,7 +78,7 @@ typedef struct {
 - (CGFloat)classifyExample:(XORClassifyObject *)obj inState:(lua_State *)L
 {
     NSInteger garbage_size_kbytes = lua_gc(L, LUA_GCCOUNT, LUAT_STACK_INDEX_FLOAT_TENSORS);
-
+    printf("memory used by lua: %ldK\n", (long)garbage_size_kbytes);
     if (garbage_size_kbytes >= KBYTES_CLEAN_UP)
     {
         NSLog(@"LUA -> Cleaning Up Garbage");
@@ -95,8 +95,8 @@ typedef struct {
     THFloatStorage *input_storage = THFloatStorage_newWithSize4(1, 3, imageHeight, imageWidth);
     THFloatTensor *input = THFloatTensor_newWithStorage4d(input_storage, 0, 1, 3 * imageHeight * imageWidth, 3, imageHeight * imageWidth, imageHeight, imageWidth, imageWidth, 1);
     
-    int resultWidth = imageWidth - 1;
-    int resultHeight = imageHeight - 1;
+    int resultWidth = imageWidth + 3;
+    int resultHeight = imageHeight + 3;
     
     THFloatStorage *output_storage = THFloatStorage_newWithSize4(1, 3, resultHeight, resultWidth);
     THFloatStorage_fill(output_storage, 0.0f);
@@ -142,12 +142,13 @@ typedef struct {
     const char *filePathCString = [argFilePath UTF8String];
     lua_pushstring(L, filePathCString);
     
+    // NN forward operation
     NSDate *start = [NSDate date];
     //p_call -- args, results
-    
     int res = lua_pcall(L, 3, 1, 0);
     NSTimeInterval timeInterval = fabs([start timeIntervalSinceNow]);
     NSLog(@"Forward took %.2f sec", timeInterval);
+    
     if (res != 0)
     {
         NSLog(@"error running function `f': %s",lua_tostring(L, -1));
@@ -159,15 +160,10 @@ typedef struct {
     for (int y = 0; y < resultHeight; y++) {
         for (int x = 0; x < resultWidth; x++) {
             int offset = y * resultWidth * 4 + x * 4;
-
-            //shift fix hack
-//            float r = THTensor_fastGet4d(output, 0, 0, y, x - y) + 103.939;
-//            float g = THTensor_fastGet4d(output, 0, 1, y, x - y) + 116.779;
-//            float b = THTensor_fastGet4d(output, 0, 2, y, x - y) + 123.68;
             
-            float r = THTensor_fastGet4d(output, 0, 0, y, x) + 103.939;
+            float r = THTensor_fastGet4d(output, 0, 2, y, x) + 103.939;
             float g = THTensor_fastGet4d(output, 0, 1, y, x) + 116.779;
-            float b = THTensor_fastGet4d(output, 0, 2, y, x) + 123.68;
+            float b = THTensor_fastGet4d(output, 0, 0, y, x) + 123.68;
             
             r = CLAMP(r, 0, 255);
             g = CLAMP(g, 0, 255);
@@ -177,16 +173,12 @@ typedef struct {
             resultRawData[offset + 1] = (uint8_t)g;
             resultRawData[offset + 2] = (uint8_t)b;
             resultRawData[offset + 3] = (uint8_t)255;
-            
-//            resultRawData[offset] = 255;
-//            resultRawData[offset + 1] = 0;
-//            resultRawData[offset + 2] = 0;
-//            resultRawData[offset + 3] = 255;
         }
     }
     
     NSData *outputData = [NSData dataWithContentsOfFile:argFilePath];
     
+    bytesPerRow = resultWidth * 4;
     CGContextRef newContext = CGBitmapContextCreate(resultRawData, resultWidth, resultHeight,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
