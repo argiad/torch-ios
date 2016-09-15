@@ -5,7 +5,7 @@ XCODE_ROOT=`xcode-select -print-path`
 IPHONE_SDKVERSION=`xcodebuild -showsdks | grep iphoneos | egrep "[[:digit:]]+\.[[:digit:]]+" -o | tail -1`
 ARM_DEV_CMD="xcrun --sdk iphoneos"
 SIM_DEV_CMD="xcrun --sdk iphonesimulator"
-EXTRA_FLAGS="-miphoneos-version-min=6.0 -fembed-bitcode"
+EXTRA_FLAGS="-miphoneos-version-min=6.0 -O2"
 
 configure_exports() {
     if [[ $1 = arm* ]]; then
@@ -55,9 +55,6 @@ generate_arch() {
     cp $SCRIPT_DIR/build/pkg/torch/libtorch.a                $SCRIPT_DIR/framework/lib/$1
     
     cp $SCRIPT_DIR/build/3rdparty/nn/libnn.a                 $SCRIPT_DIR/framework/lib/$1
-    cp $SCRIPT_DIR/build/3rdparty/image/libimage.a           $SCRIPT_DIR/framework/lib/$1
-    cp $SCRIPT_DIR/build/3rdparty/nnx/libnnx.a               $SCRIPT_DIR/framework/lib/$1
-    cp $SCRIPT_DIR/build/3rdparty/cjson/libcjson.a           $SCRIPT_DIR/framework/lib/$1
     
     # copy lua scripts
     mkdir -p $SCRIPT_DIR/framework/lua/torch
@@ -68,14 +65,6 @@ generate_arch() {
     
     mkdir -p $SCRIPT_DIR/framework/lua/nn
     cp -r $SCRIPT_DIR/3rdparty/nn/*.lua $SCRIPT_DIR/framework/lua/nn/
-    
-    mkdir -p $SCRIPT_DIR/framework/lua/nnx
-    cp -r $SCRIPT_DIR/3rdparty/nnx/*.lua $SCRIPT_DIR/framework/lua/nnx/
-    
-    mkdir -p $SCRIPT_DIR/framework/lua/image
-    cp -r $SCRIPT_DIR/3rdparty/image/*.lua $SCRIPT_DIR/framework/lua/image/
-    
-    
 }
 
 extract_archive() {
@@ -87,15 +76,12 @@ extract_archive() {
 
 extract_recombine() {
     cd $SCRIPT_DIR/framework/lib/$1
-    extract_archive cjson
-    extract_archive image
     extract_archive luaT
     extract_archive nn
-    extract_archive nnx
     extract_archive TH
     extract_archive torch
     extract_archive torch-lua-static
-    ar -qc libtorch-$1.a cjson/*.o image/*.o luaT/*.o nn/*.o nnx/*.o TH/*.o \
+    ar -qc libtorch-$1.a luaT/*.o nn/*.o TH/*.o \
         torch/*.o torch-lua-static/*.o
     cd $SCRIPT_DIR
 }
