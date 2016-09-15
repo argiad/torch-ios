@@ -106,28 +106,35 @@ static void nn_(unfolded_copy)(
       for(y = 0; y < outputHeight; y++) {
         iy = (long long)(y*dH - padH + kh);
         if (iy < 0 || iy >= inputHeight) {
-          memset(dst+y*outputWidth, 0, sizeof(real)*outputWidth);
+          //memset(dst+y*outputWidth, 0, sizeof(real)*outputWidth);
+          THVector_(fill)(dst+y*outputWidth, 0, outputWidth);
         } else {
           if (dW==1){
              ix = (long long)(0 - padW + kw);
              lpad = fmaxf(0,(int)(padW-kw));
              rpad = fmaxf(0,(int)(padW-(kW-kw-1)));
              if (outputWidth-rpad-lpad <= 0) {
-                memset(dst+(size_t)(y*outputWidth), 0, sizeof(real)*outputWidth);
-             } else {
-                if (lpad > 0) memset(dst+y*outputWidth, 0, sizeof(real)*lpad);
-                memcpy(dst+(size_t)(y*outputWidth+lpad), src+(size_t)(iy*inputWidth+ix+lpad), sizeof(real)*(outputWidth-rpad-lpad));
-                if (rpad > 0) memset(dst+y*outputWidth + outputWidth - rpad, 0, sizeof(real)*rpad);
+                //memset(dst+(size_t)(y*outputWidth), 0, sizeof(real)*outputWidth);
+                THVector_(fill)(dst+(size_t)(y*outputWidth), 0, outputWidth);   
+          } else {
+                if (lpad > 0) THVector_(fill)(dst+y*outputWidth, 0, lpad); //memset(dst+y*outputWidth, 0, sizeof(real)*lpad);
+                //memcpy(dst+(size_t)(y*outputWidth+lpad), src+(size_t)(iy*inputWidth+ix+lpad), sizeof(real)*(outputWidth-rpad-lpad));
+                THVector_(copy)(dst+(size_t)(y*outputWidth+lpad), src+(size_t)(iy*inputWidth+ix+lpad), outputWidth-rpad-lpad);
+                if (rpad > 0) THVector_(fill)(dst+y*outputWidth + outputWidth - rpad, 0, rpad);// memset(dst+y*outputWidth + outputWidth - rpad, 0, sizeof(real)*rpad);
              }
           }
           else{
             for (x=0; x<outputWidth; x++){
                ix = (long long)(x*dW - padW + kw);
                if (ix < 0 || ix >= inputWidth)
-                 memset(dst+(size_t)(y*outputWidth+x), 0, sizeof(real)*1);
+               {
+                 memset(dst+(size_t)(y*outputWidth+x), 0, sizeof(real)*1); 
+               }   
                else
+               {
                  memcpy(dst+(size_t)(y*outputWidth+x), src+(size_t)(iy*inputWidth+ix), sizeof(real)*(1));
-            }
+               } 
+           }
           }
         }
       }
@@ -136,11 +143,11 @@ static void nn_(unfolded_copy)(
         iy = (long long)(y*dH + kh);
         ix = (long long)(0 + kw);
         if (dW == 1)
-           memcpy(dst+(size_t)(y*outputWidth), src+(size_t)(iy*inputWidth+ix), sizeof(real)*outputWidth);
-        else{
+           //memcpy(dst+(size_t)(y*outputWidth), src+(size_t)(iy*inputWidth+ix), sizeof(real)*outputWidth);
+           THVector_(copy)(dst+(size_t)(y*outputWidth), src+(size_t)(iy*inputWidth+ix), outputWidth);
+        else
           for (x=0; x<outputWidth; x++)
              memcpy(dst+(size_t)(y*outputWidth+x), src+(size_t)(iy*inputWidth+ix+x*dW), sizeof(real)*(1));
-         }
       }
     }
   }
