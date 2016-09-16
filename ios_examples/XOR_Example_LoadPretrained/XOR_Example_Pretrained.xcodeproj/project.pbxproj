@@ -21,6 +21,7 @@
 		3CC8936B1BE6679A00A40467 /* Torch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC8936A1BE6679A00A40467 /* Torch.framework */; };
 		3CC8936C1BE66BFC00A40467 /* Torch.framework in Resources */ = {isa = PBXBuildFile; fileRef = 3CC8936A1BE6679A00A40467 /* Torch.framework */; };
 		8B75E2E71D8197CD001A742B /* lena.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8B75E2E61D8197CD001A742B /* lena.jpg */; };
+		8BEAB2B91D8C081C00886D73 /* img512x512.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8BEAB2B81D8C081C00886D73 /* img512x512.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		3CC893681BE6679100A40467 /* Torch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Torch.m; path = ../../../framework/Torch.m; sourceTree = "<group>"; };
 		3CC8936A1BE6679A00A40467 /* Torch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Torch.framework; path = ../../../Torch.framework; sourceTree = "<group>"; };
 		8B75E2E61D8197CD001A742B /* lena.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = lena.jpg; sourceTree = "<group>"; };
+		8BEAB2B81D8C081C00886D73 /* img512x512.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img512x512.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 		3C6963981B2A5C6300E39843 /* XOR_Example_Pretrained */ = {
 			isa = PBXGroup;
 			children = (
+				8BEAB2B81D8C081C00886D73 /* img512x512.jpg */,
 				3C69639D1B2A5C6300E39843 /* AppDelegate.h */,
 				3C69639E1B2A5C6300E39843 /* AppDelegate.m */,
 				3C6963A01B2A5C6300E39843 /* ViewController.h */,
@@ -195,6 +198,7 @@
 				TargetAttributes = {
 					3C6963951B2A5C6300E39843 = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = 8RGF4G2N3L;
 					};
 					3C6963AE1B2A5C6300E39843 = {
 						CreatedOnToolsVersion = 6.3;
@@ -226,6 +230,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BEAB2B91D8C081C00886D73 /* img512x512.jpg in Resources */,
 				3CC8936C1BE66BFC00A40467 /* Torch.framework in Resources */,
 				8B75E2E71D8197CD001A742B /* lena.jpg in Resources */,
 				3C6963A51B2A5C6300E39843 /* Main.storyboard in Resources */,
@@ -382,6 +387,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8RGF4G2N3L;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../../",
@@ -398,6 +405,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8RGF4G2N3L;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../../",

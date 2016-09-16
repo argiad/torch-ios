@@ -33,10 +33,15 @@ typedef struct {
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(disableKeyboard)];
     [self.view addGestureRecognizer:tap];
   
+    
     self.t = [Torch new];
     [self.t initialize];
     [self.t runMain:@"main" inFolder:@"xor_lua"];
+    NSDate *start = [NSDate date];
+    //p_call -- args, results
     [self.t loadFileWithName:@"model.t7" inResourceFolder:@"xor_lua" andLoadMethodName:@"loadNeuralNetwork"];
+    NSTimeInterval timeInterval = fabs([start timeIntervalSinceNow]);
+    NSLog(@"Load took %.2f sec", timeInterval);
 }
 
 - (void)disableKeyboard
@@ -86,6 +91,7 @@ typedef struct {
     }
     
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"lena" ofType:@"jpg"];
+//    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"img512x512" ofType:@"jpg"];
     NSData *imageData = [NSData dataWithContentsOfFile:filePath];
     UIImage *image = [UIImage imageWithData:imageData];
     
