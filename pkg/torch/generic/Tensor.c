@@ -25,6 +25,12 @@ static int torch_Tensor_(size)(lua_State *L)
   return 1;
 }
 
+static int torch_Tensor_(elementSize)(lua_State *L)
+{
+  lua_pushnumber(L, THStorage_(elementSize)());
+  return 1;
+}
+
 static int torch_Tensor_(stride)(lua_State *L)
 {
   THTensor *tensor = luaT_checkudata(L, 1, torch_Tensor);
@@ -1036,6 +1042,7 @@ static int torch_Tensor_(read)(lua_State *L)
 static const struct luaL_Reg torch_Tensor_(_) [] = {
   {"contiguous", torch_Tensor_(contiguous)},
   {"size", torch_Tensor_(size)},
+  {"elementSize", torch_Tensor_(elementSize)},
   {"__len__", torch_Tensor_(size)},
   {"stride", torch_Tensor_(stride)},
   {"dim", torch_Tensor_(nDimension)},

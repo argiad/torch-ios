@@ -35,7 +35,7 @@ static inline void THVector_(fill)(real *x, const real c, const long n) {
   long i = 0;
 #if defined(__NEON_HL__) && defined(TH_REAL_IS_FLOAT)
   float32x4_t v4 = vdupq_n_f32(c);
-  float32x4x4_t v16 = { v4, v4, v4, v4 };
+  float32x4x4_t v16 = {v4, v4, v4, v4};
   
   for (; i <= n-16; i += 16)
   {

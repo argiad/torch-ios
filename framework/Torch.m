@@ -94,6 +94,9 @@
   // load nn
   luaopen_libnn(L);
   [self requireFrameworkPackage:@"nn" frameworkResourcesPath:frameworkResourcesPath];
+  
+  // load optnet
+  [self requireFrameworkPackage:@"optnet" frameworkResourcesPath:frameworkResourcesPath];
 
   return;
 }

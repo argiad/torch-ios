@@ -75,11 +75,30 @@ function torch.type(obj)
    return class
 end
 
+function torch.isTensor(obj)
+   local typename = torch.typename(obj)
+   if typename and typename:find('torch.*Tensor') then
+      return true
+   end
+   return false
+end
+
+function torch.isStorage(obj)
+   local typename = torch.typename(obj)
+   if typename and typename:find('torch.*Storage') then
+      return true
+   end
+   return false
+end
+
 torch.setdefaulttensortype('torch.FloatTensor')
 
 torch.include('torch','Tensor.lua')
 torch.include('torch','File.lua')
 torch.include('torch','CmdLine.lua')
 torch.include('torch','Tester.lua')
+
+-- alias for convenience
+torch.Tensor.isTensor = torch.isTensor
 
 return torch
