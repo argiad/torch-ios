@@ -95,8 +95,8 @@ typedef struct {
     THFloatStorage *input_storage = THFloatStorage_newWithSize4(1, 3, imageHeight, imageWidth);
     THFloatTensor *input = THFloatTensor_newWithStorage4d(input_storage, 0, 1, 3 * imageHeight * imageWidth, 3, imageHeight * imageWidth, imageHeight, imageWidth, imageWidth, 1);
     
-    int resultWidth = imageWidth + 3;
-    int resultHeight = imageHeight + 3;
+    int resultWidth = imageWidth;
+    int resultHeight = imageHeight;
     
     THFloatStorage *output_storage = THFloatStorage_newWithSize4(1, 3, resultHeight, resultWidth);
     THFloatStorage_fill(output_storage, 0.0f);
@@ -161,9 +161,9 @@ typedef struct {
         for (int x = 0; x < resultWidth; x++) {
             int offset = y * resultWidth * 4 + x * 4;
             
-            float r = THTensor_fastGet4d(output, 0, 2, y, x) + 103.939;
+            float r = THTensor_fastGet4d(output, 0, 2, y, x) + 123.68;
             float g = THTensor_fastGet4d(output, 0, 1, y, x) + 116.779;
-            float b = THTensor_fastGet4d(output, 0, 0, y, x) + 123.68;
+            float b = THTensor_fastGet4d(output, 0, 0, y, x) + 103.939;
             
             r = CLAMP(r, 0, 255);
             g = CLAMP(g, 0, 255);
